@@ -30,14 +30,16 @@ params_head = 12
 params_hidden_size = 768
 params_intermediate_size = 4 * 768
 
-params_check = "modelfiles/tta_rdrop_y"
 params_batch_size = 4
 params_drop_rate = 0.2
 params_epochs = 100
 params_lr = 1.0e-5
 params_eps = 1.0e-6
+params_alpha = 5.0
 params_patience = 7
 params_mode = "train0"
+params_check = "modelfiles/tta_rdrop_y_" + str(params_alpha)
+# params_check = "modelfiles/tta_rdrop_y_0.3"
 
 tf.random.set_seed(0)
 np.random.seed(0)
@@ -290,7 +292,7 @@ def metrics(logits, label):
 
     losskl = tf.reduce_mean(0.5 * (binary_crossentropy(logits1, logits2) + binary_crossentropy(logits2, logits1)))
 
-    loss = lossc + 0.3 * losskl
+    loss = lossc + params_alpha * losskl
 
     predict = tf.cast(tf.greater(logits1, 0.5), tf.int32)
 
